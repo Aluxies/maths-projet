@@ -64,7 +64,59 @@ def pageRankPower(A: np.matrix, alpha: float, v: np.array) -> np.array:
 
 
 def randomWalk(A: np.matrix, alpha: float, v: np.array, nsteps: int = 20000, start_node: int = 0) -> np.array:
-	return
+
+	# random number generator
+	rng = np.random.default_rng(0)
+
+	# matrix side size
+	n = A.shape[0]
+
+	# probability transition matrix
+	P = probabilityTransitionMatrix(A, n)
+
+	# vector of visits count for each node
+	visits = np.zeros(n, dtype=float)
+
+	# calculating transposition of v
+	vt = v[None, :]
+
+	# identity vector
+	e = np.ones((n, 1))
+
+	# google = alpha * P + (1 - alpha) e*v^T
+	G = alpha * P.T + (1 - alpha) * (e @ vt)
+
+	# current node index
+	current = start_node
+
+	page_rank_linear = pageRankLinear(A, alpha, v)
+
+	logs_every = 500
+
+	errors = []
+	k = []
+
+	# iterating by calculating the Google matrix
+	for i in range(nsteps+1):
+		# teleportation based on personnalisation vector
+		current = rng.choice(n, p=G[current])
+		visits[current] += 1.0
+		
+		if i % logs_every == 0:
+			# Calculating the mean error for this iteration
+			mean_error = np.abs(pageRankRandomWalk(visits) - page_rank_linear).mean()
+			errors.append(mean_error)
+			k.append(i)
+	
+	return pageRankRandomWalk(visits), errors, k
+
+def pageRankRandomWalk(visits: np.array) -> np.array:
+	if visits.sum() > 0:
+		distance = visits / visits.sum()
+	else:
+		distance = visits
+	
+	return distance
 
 def probabilityTransitionMatrix(A: np.matrix, n: int):
 

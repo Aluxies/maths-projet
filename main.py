@@ -1,5 +1,6 @@
 import numpy as np
-from pr_funcs import pageRankLinear, pageRankPower
+import matplotlib.pyplot as plt
+from pr_funcs import pageRankLinear, pageRankPower, randomWalk
 
 def read_csv_matrix(path):
 	return np.loadtxt(path, delimiter=',')
@@ -31,7 +32,17 @@ def generate_matrix_csv():
 	print("génération du fichier matrix csv")
 	return M
 
-
+def generate_plot_random_walk(errors, k):
+	# Plot mean error ε(k) at time k
+	plt.figure()
+	plt.plot(k, errors)
+	plt.xlabel("Pas de temps k")
+	plt.ylabel("Erreur moyenne ε(k)")
+	plt.title("Convergence de la marche aléatoire vers PageRank personnalisé")
+	plt.ylim(bottom=0)
+	
+	plt.grid(True)
+	plt.show()
 
 if __name__ == "__main__":
 	alpha = 0.9
@@ -57,6 +68,13 @@ if __name__ == "__main__":
 
 	print(x2)
 
+	x3, errors, k = randomWalk(A, alpha, v)
+
+	print("zzzzz")
+	
+	print(x3)
+
+	generate_plot_random_walk(errors, k)
 
 	# On remarque que que niveau d'importance du plus bas au plus haut est:
 	# H, G, A, C, F, D, E, B, J, I
