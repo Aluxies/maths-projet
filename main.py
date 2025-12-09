@@ -1,5 +1,5 @@
 import numpy as np
-from pr_funcs import pageRankLinear
+from pr_funcs import pageRankLinear, pageRankPower
 
 def read_csv_matrix(path):
 	return np.loadtxt(path, delimiter=',')
@@ -49,9 +49,13 @@ if __name__ == "__main__":
 
 
 	print("pageRankLinear: \n")
-	x = pageRankLinear(A, alpha, v)
-	print(f"x: {x}\n")
-	print("Somme des scores (=1?) :", x.sum())
+	x1 = pageRankLinear(A, alpha, v)
+	print(f"x: {x1}\n")
+	print("Somme des scores (=1?) :", x1.sum())
+
+	x2 = pageRankPower(A, alpha, v)
+
+	print(x2)
 
 
 	# On remarque que que niveau d'importance du plus bas au plus haut est:
