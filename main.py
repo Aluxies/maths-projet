@@ -39,7 +39,7 @@ def generate_plot_random_walk(errors, k):
 	plt.xlabel("Pas de temps k")
 	plt.ylabel("Erreur moyenne ε(k)")
 	plt.title("Convergence de la marche aléatoire vers PageRank personnalisé")
-	plt.ylim(bottom=0)
+	plt.ylim(bottom=0, top=1.1)
 	
 	plt.grid(True)
 	plt.show()
@@ -64,15 +64,17 @@ if __name__ == "__main__":
 	print(f"x: {x1}\n")
 	print("Somme des scores (=1?) :", x1.sum())
 
+	print("pageRankPower: \n")
 	x2 = pageRankPower(A, alpha, v)
 
-	print(x2)
+	print(f"x: {x2}\n")
 
+	print("pageRankRandomWalk: \n")
 	x3, errors, k = randomWalk(A, alpha, v)
 
-	print("zzzzz")
+	print("")
 	
-	print(x3)
+	print(f"x: {x3}\n")
 
 	generate_plot_random_walk(errors, k)
 
