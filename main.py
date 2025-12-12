@@ -39,7 +39,7 @@ def generate_plot_random_walk(errors, k):
 	plt.xlabel("Pas de temps k")
 	plt.ylabel("Erreur moyenne ε(k)")
 	plt.title("Convergence de la marche aléatoire vers PageRank personnalisé")
-	plt.ylim(bottom=0, top=1.1)
+	plt.ylim(bottom=0.84, top=1.005)
 
 	plt.grid(True)
 	plt.show()
