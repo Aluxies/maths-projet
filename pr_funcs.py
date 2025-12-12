@@ -81,7 +81,7 @@ def randomWalk(A: np.matrix, alpha: float, v: np.array, nsteps: int = 20000, sta
 
 		if i != 0 and (i % logs_every == 0):
 			# Calculating the mean error for this iteration
-			mean_error = 1 / (1 + np.abs(page_rank_linear - pageRankRandomWalk(visits)).mean())
+			mean_error = np.abs(page_rank_linear - pageRankRandomWalk(visits)).mean()
 			errors.append(mean_error)
 			k.append(i)
 
