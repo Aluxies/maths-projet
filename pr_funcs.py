@@ -1,22 +1,18 @@
 import numpy as np
 
-# Calculating the probability transition matrix
-def probabilityTransitionMatrix(A: np.matrix, n: int):
-	col_sums = A.sum(axis=0) # columns sum
+# Calculating the probability transition matrix transposed
+def probabilityTransitionMatrix(A: np.matrix):
+	row_sums = A.sum(axis=1)
 
-	# Probability transition matrix P : normalise each column of A to have a sum equals to 1
-	# Avoid dividing by 0 (dangling nodes)
-	P = np.zeros_like(A, dtype=float)
-	for j in range(n):
-		if col_sums[j] > 0:
-			P[:, j] = A[:, j] / col_sums[j] # normalisation column (sum=1)
-		else:
-			P[:, j] = 1.0 / n  # For the empty ones, we distribute them uniformly
+	row_sums[row_sums == 0] = 1 # On évite les division par 0 (dangling nodes)
 
+	P = A / row_sums[:, np.newaxis] # normalisation
+	P = P.T
 	return P
 
 # Calculating the Google matrix
-def googleMatrix(P: np.matrix, n: int, alpha: float, v: np.array) -> np.matrix:
+def googleMatrix(P: np.matrix, alpha: float, v: np.array) -> np.matrix:
+	n = P.shape[0]
 	vt = v[None, :] # calculating transposition of v
 	e = np.ones((n, 1)) # identity vector
 	G = alpha * P.T + (1 - alpha) * (e @ vt) # google = alpha * P + (1 - alpha) e*v^T
@@ -24,12 +20,12 @@ def googleMatrix(P: np.matrix, n: int, alpha: float, v: np.array) -> np.matrix:
 
 def pageRankLinear(A: np.matrix, alpha: float, v: np.array) -> np.array:
 	n = A.shape[0] # vector size
-	P = probabilityTransitionMatrix(A, n)
+	P = probabilityTransitionMatrix(A)
 
 	# Linear system : (I - alpha*P) x = (1 - alpha) * v
 	I = np.eye(n) # (identity matrix)
 	x = np.linalg.solve(I - alpha * P, (1 - alpha) * v) # Linear system resolution
-	x /= x.sum()  # Final normalisation 
+	x /= x.sum()  # Final normalisation
 	return x
 
 
@@ -37,10 +33,9 @@ def pageRankPower(A: np.matrix, alpha: float, v: np.array) -> np.array:
 	max_iter = 150 # max number of iterations
 	var_tol = 1e-9 # variation tolerance
 
-	n = A.shape[0] # matrix side size
-	P = probabilityTransitionMatrix(A, n) # probability transition matrix
+	P = probabilityTransitionMatrix(A) # probability transition matrix
 
-	G = googleMatrix(P, n, alpha, v) # Calculates the Google matrix
+	G = googleMatrix(P, alpha, v) # Calculates the Google matrix
 
 	pi = A.sum(axis=0) # init : indegree per column
 	pi = pi / pi.sum() # normalise the vector
@@ -60,12 +55,12 @@ def pageRankPower(A: np.matrix, alpha: float, v: np.array) -> np.array:
 def randomWalk(A: np.matrix, alpha: float, v: np.array, nsteps: int = 20000, start_node: int = 0) -> np.array:
 	rng = np.random.default_rng(0) # random number generator
 
-	n = A.shape[0] # matrix side size
-	P = probabilityTransitionMatrix(A, n) # probability transition matrix
+	n = A.shape[0]
+	P = probabilityTransitionMatrix(A) # probability transition matrix
 
 	visits = np.zeros(n, dtype=float) # vector of visits count for each node
 
-	G = googleMatrix(P, n, alpha, v) # Calculates the Google matrix
+	G = googleMatrix(P, alpha, v) # Calculates the Google matrix
 
 	current = start_node # current node index
 
