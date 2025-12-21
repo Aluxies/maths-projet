@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
 	print("> pageRankPower: \n")
 	x2 = pageRankPower(A, alpha, v)
-	print(f"{x2}\n")
+	print(f"\nx: {x2}\n")
 
 
 	print("> pageRankRandomWalk: \n")

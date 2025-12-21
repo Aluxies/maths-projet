@@ -40,6 +40,7 @@ def pageRankPower(A: np.matrix, alpha: float, v: np.array) -> np.array:
 	pi = A.sum(axis=0) # init : indegree per column
 	pi = pi / pi.sum() # normalise the vector
 
+	print("3 premières itérations :\n")
 	for i in range(max_iter): # iterating by calculating the Google matrix
 		pi_new = pi @ G
 		# if variation is under the variation tolerance number we stop iterations
