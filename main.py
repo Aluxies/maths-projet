@@ -59,7 +59,7 @@ if __name__ == "__main__":
 	print("="*60)
 	print(f"Contenu de la matrice d’adjacence: \n{A}\n")
 	print(f"Contenu du vecteur : \n{v}\n\n")
-	print(f"Contenu de la matrice de transition P : \n{probabilityTransitionMatrix(A)}\n\n")
+	print(f"Contenu de la matrice de transition P(^T) : \n{probabilityTransitionMatrix(A)}\n\n")
 	print(f"Contenu de la matrice google G : \n{googleMatrix(A, alpha, v)}\n\n")
 	print("="*60)
 
@@ -72,7 +72,6 @@ if __name__ == "__main__":
 
 	# On remarque que que niveau d'importance du plus bas au plus haut est:
 	# I, G, F, J, B, E, H, A, D, C
-	# avec dangling (H, G, A, C, F, D, E, B, J, I)
 
 	print("> pageRankPower: \n")
 	x2 = pageRankPower(A, alpha, v)
@@ -88,38 +87,30 @@ if __name__ == "__main__":
 
 	print("="*60)
 
-
-	# à probablement supprimer mais sympa pour vérif
 	print("Verification avec networkx")
 	G = nx.from_numpy_array(A, create_using=nx.DiGraph)
 	personalization_dict = {i: v[i] for i in range(len(v))}
 	pagerank_scores = nx.pagerank(G, alpha=alpha, personalization=personalization_dict)
-	print(pagerank_scores)
+	print(f"> {pagerank_scores}\n")
 
+	# Partie visualisation
+	min_score = x1.min()
+	max_score = x1.max()
+	colors = [(x1[n] - min_score) / (max_score - min_score) for n in G.nodes()]
 
-	# Normaliser les scores pour les couleurs
-	min_score = min(pagerank_scores.values())
-	max_score = max(pagerank_scores.values())
-	colors = [(pagerank_scores[n] - min_score) / (max_score - min_score) for n in G.nodes()]
-
-	# Disposition des nœuds
 	pos = nx.spring_layout(G, seed=42)
-
-	# Créer la figure et les axes
 	fig, ax = plt.subplots(figsize=(6, 6))
 
 	labels = {i: chr(65+i) for i in range(G.number_of_nodes())}
 
-	# Dessiner les nœuds avec couleurs
 	nodes = nx.draw_networkx_nodes(G, pos, node_color=colors, cmap=plt.cm.viridis, node_size=800, ax=ax)
 	nx.draw_networkx_edges(G, pos, ax=ax)
 	nx.draw_networkx_labels(G, pos, labels=labels, ax=ax)
 
-	# Ajouter la colorbar
 	sm = plt.cm.ScalarMappable(cmap=plt.cm.viridis,
 							norm=plt.Normalize(vmin=min_score, vmax=max_score))
 	sm.set_array([])
-	fig.colorbar(sm, ax=ax, label="PageRank")
+	fig.colorbar(sm, ax=ax, label="PageRank (linear)")
 
 	plt.axis('off')
 	plt.show()
